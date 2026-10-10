@@ -14,8 +14,12 @@ __pycache__/
 # Data & Biometrics (Privacy Protection)
 data/authorized_faces/*
 !data/authorized_faces/.gitkeep
+data/authorized_embeddings.json
+data/*.json
+data/*.npy
 data/*.db
 data/*.sqlite3
+
 
 # Model weights & cache
 models/*.pt

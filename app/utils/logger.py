@@ -36,22 +36,32 @@ def setup_logger(name: str = "AIPrivacyViewer", log_level: int = logging.INFO) -
         datefmt="%Y-%m-%d %H:%M:%S"
     )
     
-    # 1. Console Handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(log_format)
-    logger.addHandler(console_handler)
+    # 1. Console Handler (Safe against Windows cp1252 charmap errors)
+    try:
+        # If sys.stdout supports reconfigure
+        if hasattr(sys.stdout, "reconfigure"):
+            try:
+                sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(log_format)
+        logger.addHandler(console_handler)
+    except Exception as e:
+        print(f"Warning: Could not setup console logger: {e}")
     
     # 2. Rotating File Handler (local logs only)
     log_file_path = config.storage.logs_dir / "privacy_viewer.log"
     try:
-        file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
+        file_handler = logging.FileHandler(log_file_path, encoding="utf-8", errors="replace")
         file_handler.setFormatter(log_format)
         logger.addHandler(file_handler)
     except Exception as e:
-        logger.warning(f"Could not initialize file logger at {log_file_path}: {e}")
+        pass
         
     return logger
 
 
 # Default application logger
 app_logger = setup_logger()
+

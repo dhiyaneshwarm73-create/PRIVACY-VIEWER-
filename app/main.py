@@ -1,11 +1,13 @@
 """
 Main Application Entry Point for AI Privacy Viewer.
 
-Coordinates system initialization, configuration loading, and pipeline readiness checks.
+Coordinates system initialization, configuration loading, and launches the PySide6 Desktop GUI.
 """
 
 import sys
 import platform
+from pathlib import Path
+
 from app.utils.config import config
 from app.utils.logger import setup_logger
 
@@ -27,11 +29,7 @@ def run_system_check() -> bool:
     logger.info(f"Python Version: {platform.python_version()} ({platform.architecture()[0]})")
     logger.info(f"Operating System: {platform.system()} {platform.release()}")
     logger.info(f"Project Root: {config.storage.data_dir.parent}")
-    logger.info(f"Authorized Faces Dir: {config.storage.authorized_faces_dir}")
-    logger.info(f"Models Dir: {config.storage.models_dir}")
-    logger.info(f"Logs Dir: {config.storage.logs_dir}")
     
-    # Check directory existence
     dirs_ready = (
         config.storage.data_dir.exists() and
         config.storage.authorized_faces_dir.exists() and
@@ -49,15 +47,37 @@ def run_system_check() -> bool:
 
 def main():
     print_banner()
-    logger.info("Initializing AI Privacy Viewer [Milestone 1]...")
+    logger.info("Initializing AI Privacy Viewer Desktop UI...")
     
-    success = run_system_check()
-    if not success:
+    if not run_system_check():
         logger.error("Initialization failed during system check.")
         sys.exit(1)
-        
-    logger.info("Milestone 1 setup is complete and fully functional.")
-    logger.info("Ready for Milestone 2: OpenCV Webcam Module.")
+
+    try:
+        from PySide6.QtWidgets import QApplication
+        from PySide6.QtGui import QFont
+        from app.ui.main_window import MainWindow
+    except ImportError as e:
+        logger.error(f"PySide6 is not installed: {e}")
+        print("\n[ERROR] PySide6 is required to display the desktop interface.")
+        print("Please run: pip install PySide6\n")
+        sys.exit(1)
+
+    # Initialize Qt Application
+    app = QApplication(sys.argv)
+    app.setApplicationName(config.app_name)
+    app.setOrganizationName("AIPrivacyViewer")
+
+    # Set default modern application font
+    font = QFont("Segoe UI", 10)
+    app.setFont(font)
+
+    # Instantiate and display main window
+    window = MainWindow()
+    window.show()
+    
+    logger.info("AI Privacy Viewer Desktop GUI launched successfully.")
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
