@@ -1,0 +1,38 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Data & Biometrics (Privacy Protection)
+data/authorized_faces/*
+!data/authorized_faces/.gitkeep
+data/*.db
+data/*.sqlite3
+
+# Model weights & cache
+models/*.pt
+models/*.onnx
+models/*.weights
+models/*.tflite
+models/*.bin
+models/*.h5
+.deepface/
+weights/
+
+# Logs
+logs/
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
