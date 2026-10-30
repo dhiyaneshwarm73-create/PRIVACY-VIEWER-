@@ -482,7 +482,7 @@ class FaceRecognizer:
                 crop = FaceDetector.extract_face_crop(frame, bbox)
                 identity = self.recognize_face(crop)
             else:
-                identity = self._last_result
+                identity = face.get("identity", self._last_result)
 
             enriched_face = dict(face)
             enriched_face["identity"] = identity

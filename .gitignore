@@ -19,6 +19,7 @@ data/*.json
 data/*.npy
 data/*.db
 data/*.sqlite3
+data_backup*/
 
 
 # Model weights & cache
